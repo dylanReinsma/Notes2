@@ -26,11 +26,12 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <EditText
+    <com.dylanreinsma.notes.LinedEditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/noteText"
         android:textColor="@color/black"
-        android:padding="5dp"></EditText>
+        android:padding="5dp"
+        android:gravity="top"></com.dylanreinsma.notes.LinedEditText>
 
 </LinearLayout>

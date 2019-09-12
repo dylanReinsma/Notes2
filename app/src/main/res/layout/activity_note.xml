@@ -32,6 +32,8 @@
         android:id="@+id/noteText"
         android:textColor="@color/black"
         android:padding="5dp"
-        android:gravity="top"></com.dylanreinsma.notes.LinedEditText>
+        android:gravity="top"
+        android:imeOptions="flagNoExtractUi">
+    </com.dylanreinsma.notes.LinedEditText>
 
 </LinearLayout>

@@ -34,7 +34,7 @@
         <ImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:src="@drawable/ic_check_black_24dp"
             android:background="?attr/selectableItemBackground"
             android:id="@+id/toolbarCheck"
             android:layout_centerInParent="true"></ImageButton>
@@ -42,14 +42,16 @@
     </RelativeLayout>
 
     <EditText
+        android:id="@+id/noteTextTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
         android:layout_weight="85"
-        android:id="@+id/noteTextTitle"
+        android:singleLine="false"
         android:text="title of note"
         android:textColor="@color/black"
-        android:layout_marginStart="15dp"
         android:textSize="23sp"
+        android:background="@null"
         android:visibility="visible"></EditText>
 
 

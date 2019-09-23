@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dylanreinsma.notes.models.Note;
+import com.dylanreinsma.notes.persistence.NoteRepository;
 
 public class NoteActivity extends AppCompatActivity implements View.OnTouchListener, GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnClickListener {
 
@@ -32,6 +33,7 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
     private Note initialNote;
     private GestureDetector gestureDetector;
     private int mode;
+    private NoteRepository mNoteRepository;
 
 
     @Override
@@ -45,6 +47,8 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
         backArrowContainer = findViewById(R.id.backArrowContainer);
         check = findViewById(R.id.toolbarCheck);
         backArrow = findViewById(R.id.toolbarBackArrow);
+
+        mNoteRepository = new NoteRepository(this);
 
         if (getIncomingIntent()) {
             //this is a new note (EDIT MODE)
@@ -70,6 +74,18 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
         mode = EDIT_MODE_ENABLED;
         isNewNote = true;
         return true;
+    }
+
+    private void saveChanges(){
+        if (isNewNote){
+            saveNewNote();
+        }else{
+
+        }
+    }
+
+    private void saveNewNote(){
+        mNoteRepository.insertNoteTask(initialNote);
     }
 
     private void disableContentInteraction(){
@@ -112,6 +128,8 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
         mode = EDIT_MODE_DISABLED;
 
         disableContentInteraction();
+
+        saveChanges();
     }
 
     private void hideSoftKeyboard(){

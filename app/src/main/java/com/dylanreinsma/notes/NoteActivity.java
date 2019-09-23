@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -17,7 +19,12 @@ import android.widget.TextView;
 import com.dylanreinsma.notes.models.Note;
 import com.dylanreinsma.notes.persistence.NoteRepository;
 
-public class NoteActivity extends AppCompatActivity implements View.OnTouchListener, GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener, View.OnClickListener {
+public class NoteActivity extends AppCompatActivity implements
+        View.OnTouchListener,
+        GestureDetector.OnGestureListener,
+        GestureDetector.OnDoubleTapListener,
+        View.OnClickListener,
+        TextWatcher {
 
     private static final String TAG = "NoteActivity";
     private static final int EDIT_MODE_ENABLED = 1;
@@ -34,6 +41,7 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
     private GestureDetector gestureDetector;
     private int mode;
     private NoteRepository mNoteRepository;
+    private Note mFinalNote;
 
 
     @Override
@@ -65,6 +73,7 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
     private boolean getIncomingIntent() {
         if (getIntent().hasExtra("selected_note")) {
             initialNote = getIntent().getParcelableExtra("selected_note");
+            mFinalNote = getIntent().getParcelableExtra("selected_note");
             //Log.d(TAG, "getIncomingIntent: " + initialNote.toString());
 
             mode = EDIT_MODE_DISABLED;
@@ -85,7 +94,7 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     private void saveNewNote(){
-        mNoteRepository.insertNoteTask(initialNote);
+        mNoteRepository.insertNoteTask(mFinalNote);
     }
 
     private void disableContentInteraction(){
@@ -129,7 +138,19 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
 
         disableContentInteraction();
 
-        saveChanges();
+        String temp = linedEditText.getText().toString();
+        temp = temp.replace("\n", "");
+        temp = temp.replace(" ", "");
+        if (temp.length() > 0){
+            mFinalNote.setTitle(editText.getText().toString());
+            mFinalNote.setContent(linedEditText.getText().toString());
+            String timestamp = "Sep 2019";
+            mFinalNote.setTimestamp(timestamp);
+
+            if (!mFinalNote.getContent().equals(initialNote.getContent()) || !mFinalNote.getTitle().equals(initialNote.getTitle())){
+                saveChanges();
+            }
+        }
     }
 
     private void hideSoftKeyboard(){
@@ -147,6 +168,7 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
         textView.setOnClickListener(this);
         check.setOnClickListener(this);
         backArrow.setOnClickListener(this);
+        editText.addTextChangedListener(this);
     }
 
     private void setNoteProperties() {
@@ -158,6 +180,11 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
     private void setNewNoteProperties() {
         textView.setText("Note Title");
         editText.setText("Note Edit Title");
+
+        initialNote = new Note();
+        mFinalNote = new Note();
+        initialNote.setTitle("Note Title");
+        mFinalNote.setTitle("Note Title");
     }
 
     @Override
@@ -257,5 +284,20 @@ public class NoteActivity extends AppCompatActivity implements View.OnTouchListe
         if (mode == EDIT_MODE_ENABLED){
             enableEditMode();
         }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        textView.setText(s.toString());
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
     }
 }

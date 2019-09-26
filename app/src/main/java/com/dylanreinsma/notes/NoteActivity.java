@@ -74,8 +74,12 @@ public class NoteActivity extends AppCompatActivity implements
     private boolean getIncomingIntent() {
         if (getIntent().hasExtra("selected_note")) {
             initialNote = getIntent().getParcelableExtra("selected_note");
-            mFinalNote = getIntent().getParcelableExtra("selected_note");
-            //Log.d(TAG, "getIncomingIntent: " + initialNote.toString());
+
+            mFinalNote = new Note();
+            mFinalNote.setTitle(initialNote.getTitle());
+            mFinalNote.setContent(initialNote.getContent());
+            mFinalNote.setTimestamp(initialNote.getTimestamp());
+            mFinalNote.setId(initialNote.getId());
 
             mode = EDIT_MODE_DISABLED;
             isNewNote = false;
@@ -86,19 +90,23 @@ public class NoteActivity extends AppCompatActivity implements
         return true;
     }
 
-    private void saveChanges(){
-        if (isNewNote){
+    private void saveChanges() {
+        if (isNewNote) {
             saveNewNote();
-        }else{
-
+        } else {
+            updateNote();
         }
     }
 
-    private void saveNewNote(){
+    private void updateNote() {
+        mNoteRepository.updateNote(mFinalNote);
+    }
+
+    private void saveNewNote() {
         mNoteRepository.insertNoteTask(mFinalNote);
     }
 
-    private void disableContentInteraction(){
+    private void disableContentInteraction() {
         linedEditText.setKeyListener(null);
         linedEditText.setFocusable(false);
         linedEditText.setFocusableInTouchMode(false);
@@ -107,7 +115,7 @@ public class NoteActivity extends AppCompatActivity implements
 
     }
 
-    private void enableContentInteraction(){
+    private void enableContentInteraction() {
         linedEditText.setKeyListener(new EditText(this).getKeyListener());
         linedEditText.setFocusable(true);
         linedEditText.setFocusableInTouchMode(true);
@@ -142,25 +150,25 @@ public class NoteActivity extends AppCompatActivity implements
         String temp = linedEditText.getText().toString();
         temp = temp.replace("\n", "");
         temp = temp.replace(" ", "");
-        if (temp.length() > 0){
+        if (temp.length() > 0) {
             mFinalNote.setTitle(editText.getText().toString());
             mFinalNote.setContent(linedEditText.getText().toString());
             String timestamp = Utility.getCurrentTimestamp();
             mFinalNote.setTimestamp(timestamp);
 
-            if (!mFinalNote.getContent().equals(initialNote.getContent()) || !mFinalNote.getTitle().equals(initialNote.getTitle())){
+            if (!mFinalNote.getContent().equals(initialNote.getContent()) || !mFinalNote.getTitle().equals(initialNote.getTitle())) {
                 saveChanges();
             }
         }
     }
 
-    private void hideSoftKeyboard(){
+    private void hideSoftKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
         View view = this.getCurrentFocus();
-        if (view == null){
+        if (view == null) {
             view = new View(this);
         }
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(),0);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void setListeners() {
@@ -241,21 +249,21 @@ public class NoteActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.toolbarCheck:{
+        switch (v.getId()) {
+            case R.id.toolbarCheck: {
                 hideSoftKeyboard();
                 disableEditMode();
                 break;
             }
 
-            case R.id.noteTextTitle:{
+            case R.id.noteTextTitle: {
                 enableEditMode();
                 textView.requestFocus();
                 editText.setSelection(editText.length());
                 break;
             }
 
-            case R.id.toolbarBackArrow:{
+            case R.id.toolbarBackArrow: {
                 finish();
                 break;
             }
@@ -264,9 +272,9 @@ public class NoteActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        if (mode == EDIT_MODE_ENABLED){
+        if (mode == EDIT_MODE_ENABLED) {
             onClick(check);
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
@@ -281,7 +289,7 @@ public class NoteActivity extends AppCompatActivity implements
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mode = savedInstanceState.getInt("mode");
-        if (mode == EDIT_MODE_ENABLED){
+        if (mode == EDIT_MODE_ENABLED) {
             enableEditMode();
         }
     }

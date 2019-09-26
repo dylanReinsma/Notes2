@@ -44,7 +44,6 @@ public class NotesListActivity extends AppCompatActivity implements NotesRecycle
         mNoteRepository = new NoteRepository(this);
         initRecyclerView();
         retrieveNotes();
-        //insertFakeNote();
 
         setSupportActionBar((Toolbar)findViewById(R.id.notesToolbar));
     }
@@ -62,19 +61,6 @@ public class NotesListActivity extends AppCompatActivity implements NotesRecycle
                 mNoteRecyclerAdapter.notifyDataSetChanged();
             }
         });
-    }
-
-    private void insertFakeNote() {
-        for (int i =0; i<1000; i++) {
-            Note note = new Note();
-            note.setTitle("title # " + i);
-            note.setContent("content # " + i);
-            note.setTimestamp("Jan 2019");
-            mNotes.add(note);
-        }
-
-        mNoteRecyclerAdapter.notifyDataSetChanged();
-
     }
 
     private void initRecyclerView() {
@@ -105,6 +91,8 @@ public class NotesListActivity extends AppCompatActivity implements NotesRecycle
     private void deleteNote(Note note){
         mNotes.remove(note);
         mNoteRecyclerAdapter.notifyDataSetChanged();
+
+        mNoteRepository.deleteNote(note);
     }
 
     private ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {

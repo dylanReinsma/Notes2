@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.dylanreinsma.notes.models.Note;
 import com.dylanreinsma.notes.persistence.NoteRepository;
+import com.dylanreinsma.notes.util.Utility;
 
 public class NoteActivity extends AppCompatActivity implements
         View.OnTouchListener,
@@ -144,7 +145,7 @@ public class NoteActivity extends AppCompatActivity implements
         if (temp.length() > 0){
             mFinalNote.setTitle(editText.getText().toString());
             mFinalNote.setContent(linedEditText.getText().toString());
-            String timestamp = "Sep 2019";
+            String timestamp = Utility.getCurrentTimestamp();
             mFinalNote.setTimestamp(timestamp);
 
             if (!mFinalNote.getContent().equals(initialNote.getContent()) || !mFinalNote.getTitle().equals(initialNote.getTitle())){
@@ -229,7 +230,6 @@ public class NoteActivity extends AppCompatActivity implements
 
     @Override
     public boolean onDoubleTap(MotionEvent e) {
-        Log.d(TAG, "onDoubleTap: tapped my guy!");
         enableEditMode();
         return false;
     }

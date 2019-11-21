@@ -112,7 +112,6 @@ public class NoteActivity extends AppCompatActivity implements
         linedEditText.setFocusableInTouchMode(false);
         linedEditText.setCursorVisible(false);
         linedEditText.clearFocus();
-
     }
 
     private void enableContentInteraction() {
